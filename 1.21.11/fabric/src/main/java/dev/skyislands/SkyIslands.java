@@ -21,6 +21,12 @@ public final class SkyIslands {
                 Identifier.fromNamespaceAndPath(MOD_ID, type.id()));
     }
 
+    /** The shared void-nether noise settings entry used by every preset. */
+    public static ResourceKey<NoiseGeneratorSettings> netherKey() {
+        return ResourceKey.create(Registries.NOISE_SETTINGS,
+                Identifier.fromNamespaceAndPath(MOD_ID, "nether"));
+    }
+
     private SkyIslands() {
     }
 }

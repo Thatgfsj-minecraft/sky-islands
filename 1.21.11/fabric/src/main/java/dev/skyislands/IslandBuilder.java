@@ -12,7 +12,7 @@ import net.minecraft.world.level.block.entity.ChestBlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
 
 /**
- * Builds the starting island(s) of a sky island world. Everything is placed
+ * Builds the starting island of a sky island world. Everything is placed
  * with plain setBlock at fixed coordinates around the spawn chunk origin
  * (center x=8, z=8, grass surface at y=63, players stand at y=64), so builds
  * are deterministic and idempotent by construction; the saved-data marker in
@@ -37,7 +37,7 @@ public final class IslandBuilder {
                         new ItemStack(Items.LAVA_BUCKET),
                         new ItemStack(Items.ICE));
             }
-            case OLDSCHOOL -> {
+            case SMALL -> {
                 mainIsland3x3(level);
                 oakTree(level, 7, 9);
                 chest(level, 9, 7, Direction.WEST,
@@ -48,19 +48,6 @@ public final class IslandBuilder {
                         new ItemStack(Items.MELON_SEEDS),
                         new ItemStack(Items.BREAD),
                         new ItemStack(Items.CACTUS));
-            }
-            case ARCHIPELAGO -> {
-                mainIsland5x5(level);
-                oakTree(level, 6, 10);
-                chest(level, 10, 8, Direction.WEST,
-                        new ItemStack(Items.LAVA_BUCKET),
-                        new ItemStack(Items.ICE));
-                satellite(level, 30, 8, Blocks.SAND, Blocks.SAND);
-                level.setBlock(new BlockPos(30, SURFACE + 1, 8), Blocks.CACTUS.defaultBlockState(), 3);
-                level.setBlock(new BlockPos(30, SURFACE + 2, 8), Blocks.CACTUS.defaultBlockState(), 3);
-                satellite(level, 8, 30, Blocks.SNOW_BLOCK, Blocks.SNOW_BLOCK);
-                satellite(level, -14, 8, Blocks.NETHERRACK, Blocks.SOUL_SAND);
-                satellite(level, 8, -14, Blocks.END_STONE, Blocks.END_STONE);
             }
             case SINGLE -> {
                 set(level, CX, SURFACE, CZ, Blocks.GRASS_BLOCK);
@@ -85,7 +72,7 @@ public final class IslandBuilder {
         set(level, CX, SURFACE - 3, CZ, Blocks.BEDROCK);
     }
 
-    /** Old-school 3x3 island: one grass layer on one dirt layer, bedrock below. */
+    /** Small 3x3 island: one grass layer on one dirt layer, bedrock below. */
     private static void mainIsland3x3(ServerLevel level) {
         for (int x = CX - 1; x <= CX + 1; x++) {
             for (int z = CZ - 1; z <= CZ + 1; z++) {
@@ -94,17 +81,6 @@ public final class IslandBuilder {
             }
         }
         set(level, CX, SURFACE - 2, CZ, Blocks.BEDROCK);
-    }
-
-    /** A small 3x3 themed satellite island two blocks thick. */
-    private static void satellite(ServerLevel level, int cx, int cz, Block base, Block topCenter) {
-        for (int x = cx - 1; x <= cx + 1; x++) {
-            for (int z = cz - 1; z <= cz + 1; z++) {
-                set(level, x, SURFACE, z, base);
-                set(level, x, SURFACE - 1, z, base);
-            }
-        }
-        set(level, cx, SURFACE, cz, topCenter);
     }
 
     /** A small oak: 4 logs plus the vanilla-style leaf blob, floating over void. */

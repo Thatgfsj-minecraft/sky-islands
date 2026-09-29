@@ -7,8 +7,7 @@ package dev.skyislands;
  */
 public enum IslandType {
     CLASSIC("classic"),
-    OLDSCHOOL("oldschool"),
-    ARCHIPELAGO("archipelago"),
+    SMALL("oldschool"),
     SINGLE("single");
 
     private final String id;
@@ -17,7 +16,11 @@ public enum IslandType {
         this.id = id;
     }
 
-    /** Preset and noise settings path under the mod namespace. */
+    /**
+     * Preset and noise settings path under the mod namespace. The small
+     * island keeps its original "oldschool" id so worlds created before the
+     * rename still resolve their generator.
+     */
     public String id() {
         return id;
     }
