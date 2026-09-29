@@ -13,7 +13,7 @@
 ## 维度
 
 - **主世界**：无限虚空 + 出生点起始岛；
-- **下界**：无限虚空。**玩家每次抵达下界时，脚下自动确保一块 5×4×3 萤石平台**（只填充空气/可替换方块，绝不破坏地狱门门框和玩家建筑；已站在萤石上则跳过）。生物群系保持原版下界分布；
+- **下界**：无限虚空。**第一次有人进入下界时**（原版此刻才初始化维度），定位进入者的坐标，在其脚下生成一次 5×4×3 萤石平台——**全世界只此一次**（saved-data 标记），之后任何地点、任何方式的进入都不再放置任何方块；只填充空气/可替换方块，不碰门框和玩家建筑。生物群系保持原版下界分布；
 - **末地**：完全原版（主岛、黑曜石柱、末影龙、外岛照常）。
 
 其他共同点：
@@ -49,7 +49,7 @@ GRADLE_USER_HOME=~/.gradle-skyislands ./gradlew build
 
 - 世界类型 = 数据包 world preset（`data/skyislands/worldgen/world_preset/*.json`）+ 追加进 `#minecraft:normal` 标签，出现在原版世界类型轮换器；
 - 虚空地形 = 自定义 `noise_settings`（`final_density` 恒 0、`default_fluid`=air、`spawn_target` 空）；1.21.11 的 noise_router 键 `preliminary_surface_level` 与 1.21.1 的 `initial_density_without_jaggedness` 差异按版本各维护一份；
-- 下界 = 世界预设里的 `minecraft:the_nether` 维度 + 虚空 `noise_settings`（生物群系引用原版 `minecraft:nether` 多噪声预设）；萤石平台 = 玩家切换维度进下界的事件里按落点确保（原版 `PortalForcer` 建门只放门框不垫地）；
+- 下界 = 世界预设里的 `minecraft:the_nether` 维度 + 虚空 `noise_settings`（生物群系引用原版 `minecraft:nether` 多噪声预设）；萤石平台 = 玩家**首次**进入下界的事件里按落点生成一次（`SavedData` 布尔标记，世界生命周期内只一次）；
 - 末地 = 世界预设直接引用原版 `minecraft:end` 生成器；
 - 起始岛 = 服务端 `ServerStarted` 时由 mod 代码放置（固定坐标、确定性布局），随后把世界出生点设到岛上；`SavedData` 一次性标记防重建。
 

@@ -4,18 +4,18 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.chunk.ChunkGenerator;
 import net.minecraft.world.level.levelgen.NoiseBasedChunkGenerator;
 
 /**
- * Nether arrival safety: the sky island nether has no terrain, and vanilla
- * portal creation only builds the obsidian frame, never ground. So every time
- * a player arrives in the void nether, a 5x4x3 glowstone platform is ensured
- * right below their feet (top layer at feet-1). Only air/replaceable blocks
- * are filled, so the portal frame and player builds are never damaged, and
- * the build is skipped when the feet column already sits on glowstone.
+ * Nether initialization flow: the first time anyone enters the void nether
+ * (the moment vanilla initializes the dimension), the player's coordinates
+ * are located and a 5x4x3 glowstone platform is generated under them —
+ * exactly once for the life of the world, remembered in saved data. Every
+ * later entry, anywhere and by any means, never places a single block.
  */
 public final class NetherArrival {
 
@@ -30,13 +30,15 @@ public final class NetherArrival {
         if (!(generator instanceof NoiseBasedChunkGenerator noise) || !noise.stable(SkyIslands.netherKey())) {
             return;
         }
+        NetherPlatformTracker tracker = NetherPlatformTracker.get(level);
+        if (tracker.placed()) {
+            return;
+        }
         ensurePlatform(level, player.blockPosition());
+        tracker.markPlaced();
     }
 
     private static void ensurePlatform(ServerLevel level, BlockPos feet) {
-        if (level.getBlockState(feet.below()).is(Blocks.GLOWSTONE)) {
-            return; // platform already in place
-        }
         for (int dx = -2; dx <= 2; dx++) {
             for (int dz = -2; dz <= 1; dz++) {
                 for (int layer = 1; layer <= 3; layer++) {
