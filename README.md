@@ -1,6 +1,10 @@
 # Sky Islands（空岛世界）
 
-在 Minecraft **创建新世界**界面新增可选择的空岛世界类型：主世界和下界都是无限虚空，**末地保持原版**，**生物群系保持原版正常分布**，**种子照常随机或输入**。支持 1.21.1 / 1.21.11 × Fabric / NeoForge 四个构建。
+在 Minecraft **创建新世界**界面新增可选择的空岛世界类型：主世界和下界都是无限虚空，**末地保持原版**，**生物群系保持原版正常分布**，**种子照常随机或输入**。
+
+支持 **1.21.1 / 1.21.4 / 1.21.5 / 1.21.8 / 1.21.9 / 1.21.10 / 1.21.11 / 26.1 / 26.2 / 26.3** × **Fabric / NeoForge**（20 个构建）。
+
+> **26.x 说明**：Minecraft 自 26.1 起改为日期式版本线、不再发布混淆映射，且需要 **Java 25**。26.x 构建与 1.21.x 构建分开维护——worldgen 数据包格式在 26.3 有大改（见"技术实现"），按版本各维护一份。
 
 ## 内置世界类型
 
@@ -23,7 +27,7 @@
 
 ## 使用
 
-**单人**：把对应 jar 放进 `mods/`，创建新世界时点"世界类型"按钮轮换到 经典空岛 / 小型空岛 / 单块空岛 即可。
+**单人**：把对应版本的 jar 放进 `mods/`，创建新世界时点"世界类型"按钮轮换到 经典空岛 / 小型空岛 / 单块空岛 即可。
 
 **专用服务器**：`server.properties` 里写：
 
@@ -33,33 +37,44 @@ level-type=skyislands\:classic
 
 可选值：`skyislands:classic` / `skyislands:oldschool`（小型空岛） / `skyislands:single`。世界首次启动时自动建岛并把世界出生点设到岛上（8, 64, 8）。
 
+## 下载
+
+全部版本的 jar 见 [Releases](../../releases)（一个 release 带全部 20 个构建）：
+
+| MC 版本 | Fabric | NeoForge | Java |
+|---|---|---|---|
+| 1.21.1 / 1.21.4 / 1.21.5 / 1.21.8 / 1.21.9 / 1.21.10 / 1.21.11 | ✅ | ✅ | 21 |
+| 26.1 / 26.2 / 26.3 | ✅ | ✅ | 25 |
+
+NeoForge 侧为编译验证 + 与 Fabric 同源代码（核心类逐字节一致）。两条线的 NeoForge 官方只有 beta，已实测可用：1.21.9（21.9.16-beta）、26.3（26.3.0.37-beta）。
+
 ## 构建
 
 每个子项目独立构建（与组织内其他 mod 相同的约定）：
 
 ```bash
-cd 1.21.1/fabric   # 或 1.21.1/neoforge、1.21.11/fabric、1.21.11/neoforge
+cd 1.21.11/fabric   # 或任意 <版本>/<loader> 子目录
 GRADLE_USER_HOME=~/.gradle-skyislands ./gradlew build
 # 产物：build/libs/skyislands-<loader>-<mc>-<version>.jar
 ```
 
-> 若机器配置了全局 Gradle 镜像 init 脚本（如阿里云），NeoForge 依赖会解析失败，务必用隔离的 `GRADLE_USER_HOME`。
+> - 若机器配置了全局 Gradle 镜像 init 脚本（如阿里云），NeoForge 依赖会解析失败，务必用隔离的 `GRADLE_USER_HOME`。
+> - **26.x 子项目**：需要 JDK 25（Gradle daemon 与编译都在 25 上），Fabric 侧用 Loom 1.18.2 新插件 id `net.fabricmc.fabric-loom`（无映射行、依赖用 `implementation`），wrapper 为 Gradle 9.7+。
 
 ## 技术实现（简要）
 
-- 世界类型 = 数据包 world preset（`data/skyislands/worldgen/world_preset/*.json`）+ 追加进 `#minecraft:normal` 标签，出现在原版世界类型轮换器；
-- 虚空地形 = 自定义 `noise_settings`（`final_density` 恒 0、`default_fluid`=air、`spawn_target` 空）；1.21.11 的 noise_router 键 `preliminary_surface_level` 与 1.21.1 的 `initial_density_without_jaggedness` 差异按版本各维护一份；
-- 下界 = 世界预设里的 `minecraft:the_nether` 维度 + 虚空 `noise_settings`（生物群系引用原版 `minecraft:nether` 多噪声预设）；萤石平台 = 玩家**首次**进入下界的事件里按落点生成一次（`SavedData` 布尔标记，世界生命周期内只一次）；
+- 世界类型 = 数据包 world preset（`data/skyislands/worldgen/world_preset/*.json`）+ 追加进 `#minecraft:normal` 标签（路径必须是 `data/minecraft/tags/...`），出现在原版世界类型轮换器；
+- 虚空地形 = 自定义 `noise_settings`（`final_density` 恒 0、`default_fluid`=air、`spawn_target` 空）；noise_router 密度字段按版本分三份：≤1.21.8 用 `initial_density_without_jaggedness`、1.21.9–26.2 用 `preliminary_surface_level`、26.3 起改名 `chunk_surface_level` 且 router 缩为 8 字段（`surface_rule`→`material_rule`、BlockState JSON 改纯字符串格式）；
+- 下界 = 世界预设里的 `minecraft:the_nether` 维度 + 虚空 `noise_settings`（生物群系引用原版 `minecraft:nether` 多噪声预设）；萤石平台 = 玩家**首次**进入下界的事件里按落点生成一次（SavedData 布尔标记，世界生命周期内只一次）；
 - 末地 = 世界预设直接引用原版 `minecraft:end` 生成器；
-- 起始岛 = 服务端 `ServerStarted` 时由 mod 代码放置（固定坐标、确定性布局），随后把世界出生点设到岛上；`SavedData` 一次性标记防重建。
+- 起始岛 = 服务端 `ServerStarted` 时由 mod 代码放置（固定坐标、确定性布局），随后把世界出生点设到岛上；SavedData 一次性标记防重建；
+- 版本分叉（已实测边界，详见组织 skill）：SavedData 存储在 1.21.4 及以前用 `SavedData.Factory`、1.21.5 起用 `SavedDataType`（26.x 起 id 参数改为 `Identifier`、26.3 起 `DimensionDataStorage` 改名 `SavedDataStorage`）；世界出生点在 1.21.8 及以前用 `setDefaultSpawnPos`、1.21.9 起用 `setRespawnData`；资源定位类 1.21.10 及以前是 `ResourceLocation`、1.21.11 起改名 `Identifier`；Fabric 换维度事件 26.x 起改名 `ServerEntityLevelChangeEvents.AFTER_PLAYER_CHANGE_LEVEL`。
 
 ## 验证记录
 
-- 1.21.1 Fabric 专用服务器 E2E：岛屿方块/基岩锚/树/箱子、箱内物资、远处虚空无地形、出生群系非 void、输入种子生效（10/10）；机器人加入直接出生在岛上（2/2）；重启后不重建。
-- 下界：维度存在且群系为真实下界群系、远处无地形；机器人跨维度抵达后 5×4×3 萤石平台精确出现在落点下方（顶层 y-1，边界与底层方块逐一核对），机器人站在平台上；换地点再次进入会生成第二块平台；同维度内传送不触发。
-- 末地：维度存在且为主岛群系（原版生成器）。
-- 1.21.11 Fabric 专用服务器：`level-type` 建岛、种子生效、下界/末地维度与群系核对通过。
-- NeoForge 两侧编译通过（未做启动冒烟）。
+- 每个版本的 Fabric 专用服务器冒烟：`level-type` 建岛（草方块/基岩锚/橡树探针 + 负对照）、下界虚空维度全部通过；固定种子复测一致；SavedData 防重建标记跨重启生效。
+- 首进下界一次性平台：mineflayer 机器人实测 1.21.1 / 1.21.4 / 1.21.5 / 1.21.8 / 1.21.9 / 1.21.10 / 26.1（协议 775 已支持）——平台三层逐一探针、换地点/重启不再生成、挖掉不重建；26.2 / 26.3 因 minecraft-data 暂缺协议定义跳过 bot 测试（服务端 RCON 断言不受影响，逻辑与 26.1 同源）。
+- NeoForge 侧编译验证 + 与 Fabric 同源核心类逐字节一致（`diff -r` 自证）。
 
 ## 开源协议 / License
 

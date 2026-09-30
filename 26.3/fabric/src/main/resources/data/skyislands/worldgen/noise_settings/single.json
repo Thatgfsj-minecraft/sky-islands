@@ -1,0 +1,26 @@
+{
+  "noise": {
+    "min_y": -64,
+    "height": 384
+  },
+  "default_block": "minecraft:stone",
+  "default_fluid": "minecraft:air",
+  "noise_router": {
+    "temperature": 0.0,
+    "vegetation": 0.0,
+    "continents": 0.0,
+    "erosion": 0.0,
+    "depth": 0.0,
+    "ridges": 0.0,
+    "chunk_surface_level": 0.0,
+    "final_density": 0.0
+  },
+  "material_rule": {
+    "type": "minecraft:block",
+    "result_state": "minecraft:air"
+  },
+  "spawn_target": [],
+  "sea_level": -64,
+  "disable_mob_generation": false,
+  "legacy_random_source": false
+}
