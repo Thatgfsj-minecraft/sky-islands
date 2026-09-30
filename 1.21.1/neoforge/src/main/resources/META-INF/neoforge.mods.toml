@@ -1,12 +1,12 @@
 modLoader="javafml"
 loaderVersion="[4,)"
-license="MIT"
+license="GPL-3.0"
 
 [[mods]]
 modId="skyislands"
 version="${version}"
 displayName="Sky Islands"
-description='''Adds sky island world types to the world creation screen: classic skyblock, old-school, archipelago and single block. Normal biome distribution, normal seeds. 创建新世界时可选的内置空岛世界类型。'''
+description='''Adds skyblock world types to the world creation screen: Classic SkyBlock, Small SkyBlock and Single Block. Normal biome distribution, normal seeds. 在创建世界界面添加空岛世界类型：经典空岛、小型空岛、单块空岛。'''
 
 [[dependencies.skyislands]]
 modId="neoforge"

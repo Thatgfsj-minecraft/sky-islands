@@ -1,0 +1,19 @@
+{
+  "schemaVersion": 1,
+  "id": "skyislands",
+  "version": "${version}",
+  "name": "Sky Islands",
+  "description": "Adds skyblock world types to the world creation screen: Classic SkyBlock, Small SkyBlock and Single Block. Normal biome distribution, normal seeds. 在创建世界界面添加空岛世界类型：经典空岛、小型空岛、单块空岛。",
+  "authors": ["Thatgfsj"],
+  "license": "GPL-3.0",
+  "environment": "*",
+  "entrypoints": {
+    "main": ["dev.skyislands.fabric.SkyIslandsFabric"]
+  },
+  "depends": {
+    "fabricloader": ">=0.16.0",
+    "fabric-api": "*",
+    "minecraft": ">=1.21.4 <1.21.5",
+    "java": ">=21"
+  }
+}
