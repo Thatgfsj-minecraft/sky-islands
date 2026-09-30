@@ -61,6 +61,10 @@ GRADLE_USER_HOME=~/.gradle-skyislands ./gradlew build
 - 1.21.11 Fabric 专用服务器：`level-type` 建岛、种子生效、下界/末地维度与群系核对通过。
 - NeoForge 两侧编译通过（未做启动冒烟）。
 
-## License
+## 开源协议 / License
 
-MIT
+本项目基于 [GPL-3.0](./LICENSE)（GNU 通用公共许可证第 3 版）开源发布。
+
+- 你可以自由地使用、学习、修改和分发本项目的代码；
+- 基于本项目修改或二次开发的作品，必须同样以 GPL-3.0 协议开源，并保留相应的版权与许可声明；
+- 本项目不提供任何担保，完整条款请参见 [LICENSE](./LICENSE) 文件。
