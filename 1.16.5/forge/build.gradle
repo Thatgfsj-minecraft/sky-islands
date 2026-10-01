@@ -1,0 +1,57 @@
+buildscript {
+    repositories {
+        maven { url = 'https://maven.minecraftforge.net' }
+        mavenCentral()
+    }
+    dependencies {
+        classpath group: 'net.minecraftforge.gradle', name: 'ForgeGradle', version: '5.1.43'
+    }
+}
+apply plugin: 'net.minecraftforge.gradle'
+
+version = '1.5.0'
+group = 'dev.skyislands'
+
+archivesBaseName = 'skyislands-forge-1.16.5'
+
+java.toolchain.languageVersion = JavaLanguageVersion.of(8)
+
+minecraft {
+    mappings channel: 'official', version: '1.16.5'
+
+    runs {
+        server {
+            workingDirectory project.file('run')
+            property 'forge.logging.console.level', 'info'
+            mods {
+                skyislands {
+                    source sourceSets.main
+                }
+            }
+        }
+    }
+}
+
+repositories {
+    mavenCentral()
+}
+
+dependencies {
+    minecraft 'net.minecraftforge:forge:1.16.5-36.2.39'
+}
+
+tasks.withType(JavaCompile).configureEach {
+    options.encoding = 'UTF-8'
+}
+
+jar {
+    manifest {
+        attributes([
+            'Specification-Title': 'skyislands',
+            'Specification-Vendor': 'Thatgfsj',
+            'Specification-Version': '1.5.0',
+            'Implementation-Title': 'Sky Islands',
+            'Implementation-Version': '1.5.0'
+        ])
+    }
+}

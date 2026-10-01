@@ -1,0 +1,14 @@
+{
+  "required": true,
+  "package": "dev.skyislands.mixin",
+  "compatibilityLevel": "JAVA_8",
+  "mixins": [
+    "WorldGenSettingsMixin"
+  ],
+  "client": [
+    "WorldPresetMixin"
+  ],
+  "injectors": {
+    "defaultRequire": 1
+  }
+}

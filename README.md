@@ -2,9 +2,10 @@
 
 在 Minecraft **创建新世界**界面新增可选择的空岛世界类型：主世界和下界都是无限虚空，**末地保持原版**，**生物群系保持原版正常分布**，**种子照常随机或输入**。
 
-支持 **1.21.1 / 1.21.4 / 1.21.5 / 1.21.8 / 1.21.9 / 1.21.10 / 1.21.11 / 26.1 / 26.2 / 26.3** × **Fabric / NeoForge**（20 个构建）。
+支持 **1.7.10 / 1.12.2 / 1.16.5 / 1.21.1 / 1.21.4 / 1.21.5 / 1.21.8 / 1.21.9 / 1.21.10 / 1.21.11 / 26.1 / 26.2 / 26.3**（24 个构建，覆盖 Fabric / Forge / NeoForge）。
 
 > **26.x 说明**：Minecraft 自 26.1 起改为日期式版本线、不再发布混淆映射，且需要 **Java 25**。26.x 构建与 1.21.x 构建分开维护——worldgen 数据包格式在 26.3 有大改（见"技术实现"），按版本各维护一份。
+> **老版本说明**：1.12.2 / 1.7.10 没有数据包，世界类型为纯代码实现（Forge WorldType + 自定义 ChunkGenerator）；1.7.10 需要 Java 8。
 
 ## 内置世界类型
 
@@ -39,27 +40,30 @@ level-type=skyislands\:classic
 
 ## 下载
 
-全部版本的 jar 见 [Releases](../../releases)（一个 release 带全部 20 个构建）：
+全部版本的 jar 见 [Releases](../../releases)（一个 release 带全部 24 个构建）：
 
-| MC 版本 | Fabric | NeoForge | Java |
+| MC 版本 | 加载器 | Java | 备注 |
 |---|---|---|---|
-| 1.21.1 / 1.21.4 / 1.21.5 / 1.21.8 / 1.21.9 / 1.21.10 / 1.21.11 | ✅ | ✅ | 21 |
-| 26.1 / 26.2 / 26.3 | ✅ | ✅ | 25 |
+| 1.7.10 / 1.12.2 | Forge | 8 | 老线；纯代码 WorldType 实现 |
+| 1.16.5 | Fabric / Forge | 8 | |
+| 1.21.1 – 1.21.11 | Fabric / NeoForge | 21 | 1.21.9 的 NeoForge 官方仅有 beta（21.9.16-beta），已实测可用 |
+| 26.1 / 26.2 / 26.3 | Fabric / NeoForge | **25** | 26.3 的 NeoForge 仅有 beta（26.3.0.37-beta） |
 
-NeoForge 侧为编译验证 + 与 Fabric 同源代码（核心类逐字节一致）。两条线的 NeoForge 官方只有 beta，已实测可用：1.21.9（21.9.16-beta）、26.3（26.3.0.37-beta）。
+老版本验证差异（详见 Release 说明）：1.16.5 双 loader 全功能运行时验证；1.12.2 主世界功能运行时验证（下界平台代码验证，无客户端环境未跑运行时）；1.7.10 主世界功能运行时验证，下界平台为代码验证（1.7.10 无 mineflayer bot 支持）。
 
 ## 构建
 
-每个子项目独立构建（与组织内其他 mod 相同的约定）：
+每个项目目录下单独执行（与组织内其他 mod 相同的约定）：
 
 ```bash
-cd 1.21.11/fabric   # 或任意 <版本>/<loader> 子目录
+cd 1.21.11/fabric   # 或任意 <版本>/<加载器> 子目录
 GRADLE_USER_HOME=~/.gradle-skyislands ./gradlew build
 # 产物：build/libs/skyislands-<loader>-<mc>-<version>.jar
 ```
 
 > - 若机器配置了全局 Gradle 镜像 init 脚本（如阿里云），NeoForge 依赖会解析失败，务必用隔离的 `GRADLE_USER_HOME`。
 > - **26.x 子项目**：需要 JDK 25（Gradle daemon 与编译都在 25 上），Fabric 侧用 Loom 1.18.2 新插件 id `net.fabricmc.fabric-loom`（无映射行、依赖用 `implementation`），wrapper 为 Gradle 9.7+。
+> - **老版本子项目**：JDK 8；1.12.2 = ForgeGradle 2.3 + Gradle 4.10.3，1.7.10 = ForgeGradle 1.2 + Gradle 2.14.1（组合严格钉死，勿升级）。
 
 ## 技术实现（简要）
 

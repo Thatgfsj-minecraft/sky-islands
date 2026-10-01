@@ -1,0 +1,14 @@
+[
+{
+  "modid": "skyislands",
+  "name": "Sky Islands",
+  "description": "Adds skyblock world types: Classic SkyBlock, Small SkyBlock and Single Block. Normal biome distribution, normal seeds.",
+  "version": "${version}",
+  "mcversion": "${mcversion}",
+  "authorList": ["Thatgfsj"],
+  "credits": "",
+  "license": "GPL-3.0",
+  "screenshots": [],
+  "dependencies": []
+}
+]
