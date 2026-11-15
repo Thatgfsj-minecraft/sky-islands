@@ -21,3 +21,6 @@ type="required"
 versionRange="[1.21.11,1.21.12)"
 ordering="NONE"
 side="BOTH"
+
+[[mixins]]
+config="skyislands.mixins.json"

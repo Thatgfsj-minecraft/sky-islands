@@ -38,6 +38,8 @@ level-type=skyislands\:classic
 
 可选值：`skyislands:classic` / `skyislands:oldschool`（小型空岛） / `skyislands:single`。世界首次启动时自动建岛并把世界出生点设到岛上（8, 64, 8）。
 
+> **不再弹「实验性设置 / 是否备份」**：单人进入存档、以及创建世界时，原版会因为「世界生成来自第三方数据包」而判定为实验性设置，每次都要求确认备份。本模组已在客户端跳过这一误报——只要存档没有真正开启实验性玩法（`enabled_features` 为空）、也不是 1.16 之前的旧 customized 世界，就直接进游戏，不发任何提示。真正开启了实验性内容的存档仍然保留原版提示。
+
 ## 下载
 
 全部版本的 jar 见 [Releases](../../releases)（一个 release 带全部 24 个构建）：
@@ -73,6 +75,7 @@ GRADLE_USER_HOME=~/.gradle-skyislands ./gradlew build
 - 末地 = 世界预设直接引用原版 `minecraft:end` 生成器；
 - 起始岛 = 服务端 `ServerStarted` 时由 mod 代码放置（固定坐标、确定性布局），随后把世界出生点设到岛上；SavedData 一次性标记防重建；
 - 版本分叉（已实测边界，详见组织 skill）：SavedData 存储在 1.21.4 及以前用 `SavedData.Factory`、1.21.5 起用 `SavedDataType`（26.x 起 id 参数改为 `Identifier`、26.3 起 `DimensionDataStorage` 改名 `SavedDataStorage`）；世界出生点在 1.21.8 及以前用 `setDefaultSpawnPos`、1.21.9 起用 `setRespawnData`；资源定位类 1.21.10 及以前是 `ResourceLocation`、1.21.11 起改名 `Identifier`；Fabric 换维度事件 26.x 起改名 `ServerEntityLevelChangeEvents.AFTER_PLAYER_CHANGE_LEVEL`。
+- 实验性设置弹窗抑制 = 客户端 mixin（`dev.skyislands.mixin.WorldOpenFlowsMixin`）：原版 `RegistryDataLoader` 只把「原版内置包」提供的动态注册表条目算作稳定，数据包给的 `world_preset` / `noise_settings` 一律被打成 `Lifecycle.experimental()`；原版 `WorldDimensions` 还要求下界必须直接用 `minecraft:nether` 的 noise settings，本模组的虚空下界天然不满足。两者叠加让存档的 `worldGenSettingsLifecycle` 永远非 stable，`WorldOpenFlows` 就据此在每次进存档、每次建世界时弹备份确认。数据包侧无法清除该标记（只认 `KnownPack#isVanilla`），所以在 `openWorldCheckWorldStemCompatibility` / `confirmWorldCreation` 处提前走 stable 分支；判定条件是「存档没有开启实验性特性开关且不是旧 customized 世界」。Fabric 走 `fabric.mod.json` 的 `mixins`，NeoForge 走 `neoforge.mods.toml` 的 `[[mixins]]`；1.21.x 用 `WorldStem#worldData()`、26.x 用 `WorldStem#worldDataAndGenSettings()`，因此 1.21.x / 26.x 各一份源码。
 
 ## 验证记录
 
